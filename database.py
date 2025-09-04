@@ -5,9 +5,12 @@ client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URI)
 db = client[DB_NAME]
 collection = db[COLLECTION_NAME]
 
-async def save_file(file_id: str, file_name: str):
+async def save_file(file_id: str, file_name: str, file_unique_id: str = None):
     """Save file details into MongoDB"""
-    await collection.insert_one({"file_id": file_id, "file_name": file_name.lower()})
+    data = {"file_id": file_id, "file_name": file_name.lower()}
+    if file_unique_id:
+        data["file_unique_id"] = file_unique_id
+    await collection.insert_one(data)
 
 async def search_file(query: str):
     """Search for files by name (case-insensitive, regex)"""
