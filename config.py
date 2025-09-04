@@ -1,9 +1,11 @@
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
-
+# Telegram Bot Token
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-MONGO_URI = os.getenv("MONGO_URI")
-FILES_CHANNEL = int(os.getenv("FILES_CHANNEL"))
-LOG_CHANNEL = int(os.getenv("LOG_CHANNEL", 0))  # optional
+
+# MongoDB connection
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+
+# Database + Collection names
+DB_NAME = os.getenv("DB_NAME", "filetobot")
+COLLECTION_NAME = os.getenv("COLLECTION_NAME", "files")
