@@ -1,7 +1,7 @@
 from aiogram import Router
-from aiogram.types import Message, FSInputFile
-from database import search_file
+from aiogram.types import Message
 from aiogram.filters import Command
+from database import search_file
 
 router = Router()
 
@@ -17,7 +17,7 @@ async def search_cmd(message: Message):
     if not results:
         return await message.answer("❌ No files found!")
 
-    # Limit results to 5 for readability
+    # Send up to 5 files back
     for r in results[:5]:
         file_id = r["file_id"]
         file_name = r["file_name"]
@@ -27,5 +27,8 @@ async def search_cmd(message: Message):
                 caption=f"📂 **{file_name}**",
                 parse_mode="Markdown"
             )
-        except Exception as e:
-            await message.answer(f"⚠️ Couldn’t send `{file_name}` (maybe file expired).", parse_mode="Markdown")
+        except Exception:
+            await message.answer(
+                f"⚠️ Couldn’t send `{file_name}` (maybe file expired).",
+                parse_mode="Markdown"
+            )
