@@ -1,20 +1,15 @@
 import motor.motor_asyncio
-import os
-from config import MONGO_URI
+from config import MONGO_URI, DB_NAME, COLLECTION_NAME
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URI)
-db = client["filetobot"]
+db = client[DB_NAME]
+collection = db[COLLECTION_NAME]
 
-async def save_file(file_id, name, size):
-    await db.files.insert_one({
-        "file_id": file_id,
-        "name": name,
-        "size": size
-    })
+async def save_file(file_id: str, file_name: str):
+    """Save file details into MongoDB"""
+    await collection.insert_one({"file_id": file_id, "file_name": file_name.lower()})
 
-async def get_file(file_id):
-    return await db.files.find_one({"file_id": int(file_id)})
-
-async def search_files(keyword):
-    cursor = db.files.find({"name": {"$regex": keyword, "$options": "i"}})
-    return await cursor.to_list(length=20)
+async def search_file(query: str):
+    """Search for files by name (case-insensitive, regex)"""
+    cursor = collection.find({"file_name": {"$regex": query.lower()}})
+    return [doc async for doc in cursor]
